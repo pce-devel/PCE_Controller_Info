@@ -29,7 +29,7 @@ As can be seen in the schematic:
  2) The 74HC163 creates a divide-by-n counter based on the CLR signal, which is then used by the
 'turbo' switches to modulate auto-repeat keying.
 
-![https://console5.com/wiki/File:PC-Engine---TG16-Controller-Schematic.png](https://console5.com/wiki/File:PC-Engine---TG16-Controller-Schematic.png)
+![https://console5.com/wiki/File:PC-Engine---TG16-Controller-Schematic.png](https://console5.com/techwiki/images/9/9f/PC-Engine---TG16-Controller-Schematic.png)
 
 
 ## Signalling Protocols - Overview
