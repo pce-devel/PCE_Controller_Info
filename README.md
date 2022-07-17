@@ -14,7 +14,7 @@ to prevent issues on the internals of the peripherals if power is supplied but C
 this is not a likely case, but this is a protective measure.
 
 Similarly, the controller inputs also use 47K resistors as pullups, and return signals from the
-peripheral are gnereally sent back through current-limiting 300-ohm resistors in order to limit
+peripheral are genreally sent back through current-limiting 300-ohm resistors in order to limit
 the amount of current driven by the internal chips, in the event of an unexpected short circuit
 on the console side of the controller.
 
@@ -91,17 +91,54 @@ all 4 outputs will be LOW when CLR is HIGH.
 | HIGH | bit 2 (ie $4) | DOWN |
 | HIGH | bit 1 (ie $2) | RIGHT |
 | HIGH | bit 0 (ie $1) | UP |
-| LOW | bit 3 (ie $8) | 'run' |
-| LOW | bit 2 (ie $4) | 'select' |
+| LOW | bit 3 (ie $8) | RUN |
+| LOW | bit 2 (ie $4) | SELECT |
 | LOW | bit 1 (ie $2) | II |
 | LOW | bit 0 (ie $1) | I |
 
-
 ### Multitap Protocol
+
+Initially, multitap devices were built only for 2-button joypads, so subsequent devices which
+were deisnged to be used with them needed to be built to accept the multitap design.
+
+The multitap is essentially a multiplexer which takes CLR and SEL values from the console, and
+creates CLR and SEL values on each of the ports; likewise, it takes the output values from the
+active port and routes those back to the console.
+
+| CLR | SEL | Active Port | Port 1 CLR | Port 1 SEL | Port 2 CLR | Port 2 SEL | Port 3 CLR | Port 3 SEL | Port 4 CLR | Port 4 SEL | Port 5 CLR | Port 5 SEL |
+|-----|-----|-------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|
+| LOW  | HIGH | X | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH |
+| HIGH | HIGH | X | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH |
+| LOW  | HIGH | 1 | LOW  | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH |
+| LOW  | LOW  | 1 | LOW  | LOW  | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH |
+| LOW  | HIGH | 2 | HIGH | HIGH | LOW  | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH |
+| LOW  | LOW  | 2 | HIGH | HIGH | LOW  | LOW  | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH |
+| LOW  | HIGH | 3 | HIGH | HIGH | HIGH | HIGH | LOW  | HIGH | HIGH | HIGH | HIGH | HIGH |
+| LOW  | LOW  | 3 | HIGH | HIGH | HIGH | HIGH | LOW  | LOW  | HIGH | HIGH | HIGH | HIGH |
+| LOW  | HIGH | 4 | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | LOW  | HIGH | HIGH | HIGH |
+| LOW  | LOW  | 4 | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | LOW  | LOW  | HIGH | HIGH |
+| LOW  | HIGH | 5 | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | LOW  | HIGH |
+| LOW  | LOW  | 5 | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | LOW  | LOW  |
 
 ### 6-button Controller Protocol
 
-## Special Controller peripherals
+| Scan number | SEL value | Bit Number | Key |
+|:-----------:|:------:|:--------------:|:--------:|
+| 1 | HIGH | bit 3 (ie $8) | LEFT |
+| 1 | HIGH | bit 2 (ie $4) | DOWN |
+| 1 | HIGH | bit 1 (ie $2) | RIGHT |
+| 1 | HIGH | bit 0 (ie $1) | UP |
+| 1 | LOW | bit 3 (ie $8) | RUN |
+| 1 | LOW | bit 2 (ie $4) | SELECT |
+| 1 | LOW | bit 1 (ie $2) | II |
+| 1 | LOW | bit 0 (ie $1) | I |
+| 2 | HIGH | bits 3-0  | value 0000 |
+| 2 | LOW | bit 3 (ie $8) | VI |
+| 2 | LOW | bit 2 (ie $4) | V |
+| 2 | LOW | bit 1 (ie $2) | IV |
+| 2 | LOW | bit 0 (ie $1) | III |
+
+## Special Controller Peripherals
 
 ### Mouse Protocol
 
