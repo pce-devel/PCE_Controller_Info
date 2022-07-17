@@ -36,6 +36,21 @@ As can be seen in the schematic:
 
 ## Signalling Protocols - Overview
 
+The program will scan the joypad controls with code similar to the below.
+Notice that normally:
+1) The CRL bit is set only briefly, once per scan across all joypads
+2) SEL is kept HIGH for the initial read of joypad values, and toggled LOW to read the second group
+3) There is normally a brief delay - although the size of this can vary - between changing the value
+of the SEL line, and reading back return values from the joypad
+
+One further point which is not highlighted in the code below is that subsequent joypads are read
+simply by toggling SEL high again to advance to the next joypad in the multitap. Toggling CLR resets
+the sequence to the first port all over again.
+
+Normal reading of joypads in this way is generally carried out as part of the VSYNC interrupt, or
+as a direct result of its completion, so that values are always available, always 'fresh', and always
+based on a regular timebase.
+
 ```
 LDA #1     ; SEL High (Least-significant bit), CLR low (next-least significant bit)
 STA $1000  ; output to joypad port
@@ -47,6 +62,19 @@ STA $1000
 PHA        ; 3 cycles
 PLA        ; 4 cycles
 NOP        ; 2 cycles  total = 9 cycles, roughly 1.25 microseconds (CPU clock is normally 7.16 MHz)
+
+LDA $1000  ; read from Joypad port
+AND #$0F   ; strip the unnecessary bits
+
+LDA #0     ; Keep SEL high; drive CLR low again
+STA $1000
+           ; the following instructions are a delay to allow transition of the joypad device
+PHA        ; 3 cycles
+PLA        ; 4 cycles
+NOP        ; 2 cycles  total = 9 cycles, roughly 1.25 microseconds (CPU clock is normally 7.16 MHz)
+
+LDA $1000  ; read from Joypad port
+AND #$0F   ; strip the unnecessary bits
 ```
 
 ### 2-button Controller Protocol
