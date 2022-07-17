@@ -20,13 +20,15 @@ on the console side of the controller.
 
 ### Controller Schematics and Connector Pinout
 
-This schematic (courtesy of console5.com) shows the wiring diagram for a basic PC Engine controller.
-Schematics of additional configurations can be found here:
+This schematic shows the wiring diagram for a basic PC Engine controller. Schematics of additional
+configurations can be found here:
 https://console5.com/wiki/NEC_PC_Engine#Controller_Schematics
+
+(Many thanks to console5.com for sourcing, preserving and improving console information like this.)
 
 As can be seen in the schematic:
  1) All inputs default to high, unless they are specifically driven low
- 2) The 74HC163 creates a divide-by-n counter based on the CLR signal, which is then used by the
+ 2) The 74HC163 creates a divide-by-2/4/8 counter based on the CLR signal, which is then used by the
 'turbo' switches to modulate auto-repeat keying.
 
 ![https://console5.com/wiki/File:PC-Engine---TG16-Controller-Schematic.png](https://console5.com/techwiki/images/9/9f/PC-Engine---TG16-Controller-Schematic.png)
@@ -42,14 +44,30 @@ STA $1000
 LDA #1     ; Keep SEL high; drive CLR low again
 STA $1000
            ; the following instructions are a delay to allow transition of the joypad device
-PSHA       ; ? cycles
-PULA       ; ? cycles
-NOP        ; ? cycles  total = ? cycles, roughly ? microseconds
+PHA        ; 3 cycles
+PLA        ; 4 cycles
+NOP        ; 2 cycles  total = 9 cycles, roughly 1.25 microseconds (CPU clock is normally 7.16 MHz)
 ```
 
 ### 2-button Controller Protocol
 
-A 2-button controller is keyed primarily on the SEL signal.
+A 2-button controller is keyed primarily on the SEL signal, and sends 4 key values when SEL is high,
+and another 4 key values when SEL is low.
+
+A 2-button controller doesn't care about the CLR line, but due to the way it is connected to the 74HC157,
+all 4 outputs will be LOW when CLR is HIGH.
+
+| SEL value | Bit Number | Key |
+|:------:|:--------------:|:--------:|
+| HIGH | bit 3 (ie $8) | LEFT |
+| HIGH | bit 2 (ie $4) | DOWN |
+| HIGH | bit 1 (ie $2) | RIGHT |
+| HIGH | bit 0 (ie $1) | UP |
+| LOW | bit 3 (ie $8) | 'run' |
+| LOW | bit 2 (ie $4) | 'select' |
+| LOW | bit 1 (ie $2) | II |
+| LOW | bit 0 (ie $1) | I |
+
 
 ### Multitap Protocol
 
@@ -57,7 +75,7 @@ A 2-button controller is keyed primarily on the SEL signal.
 
 ## Special Controller peripherals
 
-### Mouse Protocol Protocol
+### Mouse Protocol
 
 ### Pachinko Controller Protocol
 
