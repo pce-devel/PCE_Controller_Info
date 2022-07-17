@@ -107,18 +107,18 @@ active port and routes those back to the console.
 
 | CLR | SEL | Active Port | Port 1 CLR | Port 1 SEL | Port 2 CLR | Port 2 SEL | Port 3 CLR | Port 3 SEL | Port 4 CLR | Port 4 SEL | Port 5 CLR | Port 5 SEL |
 |-----|-----|-------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|
-| LOW  | HIGH | X | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH |
-| HIGH | HIGH | X | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH |
-| LOW  | HIGH | 1 | LOW  | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH |
-| LOW  | LOW  | 1 | LOW  | LOW  | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH |
-| LOW  | HIGH | 2 | HIGH | HIGH | LOW  | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH |
-| LOW  | LOW  | 2 | HIGH | HIGH | LOW  | LOW  | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH |
-| LOW  | HIGH | 3 | HIGH | HIGH | HIGH | HIGH | LOW  | HIGH | HIGH | HIGH | HIGH | HIGH |
-| LOW  | LOW  | 3 | HIGH | HIGH | HIGH | HIGH | LOW  | LOW  | HIGH | HIGH | HIGH | HIGH |
-| LOW  | HIGH | 4 | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | LOW  | HIGH | HIGH | HIGH |
-| LOW  | LOW  | 4 | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | LOW  | LOW  | HIGH | HIGH |
-| LOW  | HIGH | 5 | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | LOW  | HIGH |
-| LOW  | LOW  | 5 | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | HIGH | LOW  | LOW  |
+| 0  | 1 | None | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+| 1 | 1 | None | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+| 0  | 1 | 1 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+| 0  | 0  | 1 | 0 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+| 0  | 1 | 2 | 1 | 1 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+| 0  | 0  | 2 | 1 | 1 | 0 | 0 | 1 | 1 | 1 | 1 | 1 | 1 |
+| 0  | 1 | 3 | 1 | 1 | 1 | 1 | 0 | 1 | 1 | 1 | 1 | 1 |
+| 0  | 0  | 3 | 1 | 1 | 1 | 1 | 0 | 0 | 1 | 1 | 1 | 1 |
+| 0  | 1 | 4 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 1 | 1 | 1 |
+| 0  | 0  | 4 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 0 | 1 | 1 |
+| 0  | 1 | 5 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 1 |
+| 0  | 0  | 5 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 0 |
 
 ### 6-button Controller Protocol
 
