@@ -18,6 +18,10 @@ peripheral are genreally sent back through current-limiting 300-ohm resistors in
 the amount of current driven by the internal chips, in the event of an unexpected short circuit
 on the console side of the controller.
 
+Oscilloscope traces of the CLR and SEL signals into a multitap device as a load indicate that rise
+time for these signals is on the order of 10ns, and fall time on the order of 20ns.
+
+
 ### Controller Schematics and Connector Pinout
 
 This schematic shows the wiring diagram for a basic PC Engine controller. Schematics of additional
@@ -98,6 +102,7 @@ all 4 outputs will be LOW when CLR is HIGH.
 | LOW | bit 1 (ie $2) | II |
 | LOW | bit 0 (ie $1) | I |
 
+
 ### Multitap Protocol
 
 Initially, multitap devices were built only for 2-button joypads, so subsequent devices which
@@ -124,6 +129,7 @@ joypad scan, the multitap presents it as a sustained high signal across all inpu
 | 0 | 0 | 4 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 0 | 1 | 1 |
 | 0 | 1 | 5 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 1 |
 | 0 | 0 | 5 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 0 |
+
 
 ### 6-button Controller Protocol
 
@@ -152,11 +158,42 @@ in the corresponding (SEL = LOW) scan in place of the original RUN/SELECT/II/I b
 | 2 | LOW | bit 1 (ie $2) | IV |
 | 2 | LOW | bit 0 (ie $1) | III |
 
+
 ## Special Controller Peripherals
+
+The devices identified up to this point are easily implemented using simple discreet logic ICs with limited
+statefulness.  The next group of devices rely on statefulness and have more complexity to their protocols.
 
 ### Mouse Protocol
 
+Similar to the 6-button joypad, the mouse outputs different pieces of data across a series of multiple scans.
+
+Timing is important on this protocol, as it must automatically reset so that the 'Delta X' scan is the first
+value returned in a scan sequence; as a result, there are two timeouts:
+1) If on any scan, the SEL line does not transition from HIGH to LOW within ~550 microseconds, the mouse will
+time out, consider the scan completed, and reset the delta values until the next scan.  It can be assumed that
+this is also true of LOW-to-HIGH transitions.
+2) If the CLR line is not retriggered within a similar timeframe (for example, 600 microseconds), the mouse will
+also consider the scan complete.
+
+In-between scans, any X/Y movement is accumulated and presented as a monotonic 'Delta X/Y' value at scan time.
+There does not seem to be any specific requirements for scanning frequencies, other than the fact that a
+subsequent scan should not appear within the timeout period for a preceding scan.
+
+| Scan number | SEL value | Data Returned |
+|:-----------:|:------:|:--------:|
+| 1 | HIGH | bits 7-4 of 'Delta X' |
+| 1 | LOW  | buttons (RUN,SELECT,II,I) |
+| 2 | HIGH | bits 3-0 of 'Delta X' |
+| 2 | LOW  | buttons (RUN,SELECT,II,I) |
+| 3 | HIGH | bits 7-4 of 'Delta Y' |
+| 3 | LOW  | buttons (RUN,SELECT,II,I) |
+| 4 | HIGH | bits 3-0 of 'Delta Y' |
+| 4 | LOW  | buttons (RUN,SELECT,II,I) |
+
+
 ### Pachinko Controller Protocol
+
 
 ### Memory Base 128 Protocol
 
