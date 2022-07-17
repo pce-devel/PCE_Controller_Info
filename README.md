@@ -41,7 +41,9 @@ Notice that normally:
 1) The CRL bit is set only briefly, once per scan across all joypads
 2) SEL is kept HIGH for the initial read of joypad values, and toggled LOW to read the second group
 3) There is normally a brief delay - although the size of this can vary - between changing the value
-of the SEL line, and reading back return values from the joypad
+of the SEL line, and reading back return values from the joypad. This is above and beyond the ~680ns
+delay (5 cycles) which would be implicit betwen the write cycle of a 'STA $1000' opcode and the read
+cycle of an immediately-following 'LDA $1000' opcode, for a total of roughly 1.93 microseconds.
 
 One further point which is not highlighted in the code below is that subsequent joypads are read
 simply by toggling SEL high again to advance to the next joypad in the multitap. Toggling CLR resets
@@ -99,28 +101,40 @@ all 4 outputs will be LOW when CLR is HIGH.
 ### Multitap Protocol
 
 Initially, multitap devices were built only for 2-button joypads, so subsequent devices which
-were deisnged to be used with them needed to be built to accept the multitap design.
+were designed to be used with them needed to be built to accept the multitap design.
 
 The multitap is essentially a multiplexer which takes CLR and SEL values from the console, and
 creates CLR and SEL values on each of the ports; likewise, it takes the output values from the
 active port and routes those back to the console.
 
+One interesting point is that while the console only generates a short CLR pulse at thebeginning of a
+joypad scan, the multitap presents it as a sustained high signal across all inputs except the active port.
+
 | CLR | SEL | Active Port | Port 1 CLR | Port 1 SEL | Port 2 CLR | Port 2 SEL | Port 3 CLR | Port 3 SEL | Port 4 CLR | Port 4 SEL | Port 5 CLR | Port 5 SEL |
 |-----|-----|-------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|
-| 0  | 1 | None | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+| 0 | 1 | None | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
 | 1 | 1 | None | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
-| 0  | 1 | 1 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
-| 0  | 0  | 1 | 0 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
-| 0  | 1 | 2 | 1 | 1 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
-| 0  | 0  | 2 | 1 | 1 | 0 | 0 | 1 | 1 | 1 | 1 | 1 | 1 |
-| 0  | 1 | 3 | 1 | 1 | 1 | 1 | 0 | 1 | 1 | 1 | 1 | 1 |
-| 0  | 0  | 3 | 1 | 1 | 1 | 1 | 0 | 0 | 1 | 1 | 1 | 1 |
-| 0  | 1 | 4 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 1 | 1 | 1 |
-| 0  | 0  | 4 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 0 | 1 | 1 |
-| 0  | 1 | 5 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 1 |
-| 0  | 0  | 5 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 0 |
+| 0 | 1 | 1 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+| 0 | 0 | 1 | 0 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+| 0 | 1 | 2 | 1 | 1 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+| 0 | 0 | 2 | 1 | 1 | 0 | 0 | 1 | 1 | 1 | 1 | 1 | 1 |
+| 0 | 1 | 3 | 1 | 1 | 1 | 1 | 0 | 1 | 1 | 1 | 1 | 1 |
+| 0 | 0 | 3 | 1 | 1 | 1 | 1 | 0 | 0 | 1 | 1 | 1 | 1 |
+| 0 | 1 | 4 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 1 | 1 | 1 |
+| 0 | 0 | 4 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 0 | 1 | 1 |
+| 0 | 1 | 5 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 1 |
+| 0 | 0 | 5 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 0 |
 
 ### 6-button Controller Protocol
+
+When fighting games like Street Fighter II became popular at the arcades, a 6-button joypad was required
+to support games like it on the PC Engine.
+
+The signalling format is the same as the 2-button joypad, except that on alternating scans (inferred by
+counting 'CLR' pulses), the direction buttons scan (SEL = HIGH) will show either the actual direction buttons,
+or a value of '0000', which is effectively impossible (as it would imply that opposing directions are
+simultaneously pressed, which is not possible on a standard controller). The additional buttons are sent
+in the corresponding (SEL = LOW) scan in place of the original RUN/SELECT/II/I buttons.
 
 | Scan number | SEL value | Bit Number | Key |
 |:-----------:|:------:|:--------------:|:--------:|
