@@ -252,6 +252,9 @@ Note that all data is sent least-significant bit first (in both directions):
 | 6 | 0 or 2 | Trailing empty bits (**Only if a write command**). Data out is set to zero after the first bit is recieved  |
 | 7 | 3 | Trailing empty bits. Data out is set to zero after the first bit is recieved  |
 
+At the concolusion of a transfer, the Memory base 128 disengages and allows the daisy-chained controller outputs
+to be returned to the console until the next $A8 sequence is received from the console.
+
 
 ### Develo Box Protocol
 
