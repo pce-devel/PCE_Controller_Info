@@ -10,11 +10,11 @@ There are 6 active lines (besides power and ground) on the connector, with two b
 the console (SEL and CLR), and 4 being return signals from the joypad/peripheral.
 
 Electrically, the signals of SEL and CLR are generally pulled up by a 47K resistor on the peripheral
-to prevent issues on the internals of the peripherals if power is supplied but CLR/SEL arr floating;
+to prevent issues on the internals of the peripherals if power is supplied but CLR/SEL are floating;
 this is not a likely case, but this is a protective measure.
 
 Similarly, the controller inputs also use 47K resistors as pullups, and return signals from the
-peripheral are genreally sent back through current-limiting 300-ohm resistors in order to limit
+peripheral are generally sent back through current-limiting 300-ohm resistors in order to limit
 the amount of current driven by the internal chips, in the event of an unexpected short circuit
 on the console side of the controller.
 
@@ -41,6 +41,7 @@ As can be seen in the schematic:
 ## Signalling Protocols - Overview
 
 The program will scan the joypad controls with code similar to the below.
+
 Notice that normally:
 1) The CRL bit is set only briefly, once per scan across all joypads
 2) SEL is kept HIGH for the initial read of joypad values, and toggled LOW to read the second group
@@ -117,18 +118,18 @@ joypad scan, the multitap presents it as a sustained high signal across all inpu
 
 | CLR | SEL | Active Port | Port 1 CLR | Port 1 SEL | Port 2 CLR | Port 2 SEL | Port 3 CLR | Port 3 SEL | Port 4 CLR | Port 4 SEL | Port 5 CLR | Port 5 SEL |
 |-----|-----|-------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|
-| 0 | 1 | None | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
-| 1 | 1 | None | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
-| 0 | 1 | 1 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
-| 0 | 0 | 1 | 0 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
-| 0 | 1 | 2 | 1 | 1 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
-| 0 | 0 | 2 | 1 | 1 | 0 | 0 | 1 | 1 | 1 | 1 | 1 | 1 |
-| 0 | 1 | 3 | 1 | 1 | 1 | 1 | 0 | 1 | 1 | 1 | 1 | 1 |
-| 0 | 0 | 3 | 1 | 1 | 1 | 1 | 0 | 0 | 1 | 1 | 1 | 1 |
-| 0 | 1 | 4 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 1 | 1 | 1 |
-| 0 | 0 | 4 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 0 | 1 | 1 |
-| 0 | 1 | 5 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 1 |
-| 0 | 0 | 5 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 0 |
+| L | H | None | H | H | H | H | H | H | H | H | H | H |
+| H | H | None | H | H | H | H | H | H | H | H | H | H |
+| L | H | 1 | L | H | H | H | H | H | H | H | H | H |
+| L | L | 1 | L | L | H | H | H | H | H | H | H | H |
+| L | H | 2 | H | H | L | H | H | H | H | H | H | H |
+| L | L | 2 | H | H | L | L | H | H | H | H | H | H |
+| L | H | 3 | H | H | H | H | L | H | H | H | H | H |
+| L | L | 3 | H | H | H | H | L | L | H | H | H | H |
+| L | H | 4 | H | H | H | H | H | H | L | H | H | H |
+| L | L | 4 | H | H | H | H | H | H | L | L | H | H |
+| L | H | 5 | H | H | H | H | H | H | H | H | L | H |
+| L | L | 5 | H | H | H | H | H | H | H | H | L | L |
 
 
 ### 6-button Controller Protocol
@@ -179,7 +180,7 @@ this is also true of LOW-to-HIGH transitions.
 2) If the CLR line is not retriggered within a similar timeframe (for example, 600 microseconds), the mouse will
 also consider the scan complete.
 
-In-between scans, any X/Y movement is accumulated and presented as a monotonic 'Delta X/Y' value at scan time.
+In-between scans, any X/Y movement is accumulated and presented as a net 'Delta X/Y' value at scan time.
 There does not seem to be any specific requirements for scanning frequencies, other than the fact that a
 subsequent scan should not appear within the timeout period for a preceding scan.
 
@@ -221,7 +222,8 @@ full-range of clockwise motion).
 
 ### Memory Base 128 Protocol
 
-Memory Base 128 is a console (host)-driven protocol which resenbles SPI to a certain degree.
+Memory Base 128 is a console (host)-driven protocol which resembles SPI to a certain degree, and covers both
+NEC-made "Memory Base 128" units as well as KOEI-made "Save-Kun" units.
 
 For Memory Base 128 protocol, the 'CLR' line is similar to the 'CLK' line of SPI, and when CLR transitions
 from LOW to HIGH, the value of SEL is taken as a single bit of data. Under normal conditions, the joypad read
@@ -249,10 +251,10 @@ Note that all data is sent least-significant bit first (in both directions):
 | 3 | 10 | Address (minimum granularity 128-byte offset within memory) |
 | 4 | 20 | Transfer length in bits (can address 128KB of memory down to the exact number of bits) |
 | 5 | (xfer len) | Data (to or from the console) |
-| 6 | 0 or 2 | Trailing empty bits (**Only if a write command**). Data out is set to zero after the first bit is recieved  |
-| 7 | 3 | Trailing empty bits. Data out is set to zero after the first bit is recieved  |
+| 6 | 0 or 2 | Trailing empty bits (**Only if a write command**). Data out is set to zero after the first bit is received  |
+| 7 | 3 | Trailing empty bits. Data out is set to zero after the first bit is received  |
 
-At the concolusion of a transfer, the Memory base 128 disengages and allows the daisy-chained controller outputs
+At the conclusion of a transfer, the Memory base 128 disengages and allows the daisy-chained controller outputs
 to be returned to the console until the next $A8 sequence is received from the console.
 
 
@@ -263,3 +265,7 @@ to handle the more complicated communications this involves.
 
 This deserves its own file, which will follow in the near future.
 
+
+## To Be Added:
+
+### X-HE3 Converter for XE-1AP Analog Controller
