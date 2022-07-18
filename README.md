@@ -142,6 +142,9 @@ or a value of '0000', which is effectively impossible (as it would imply that op
 simultaneously pressed, which is not possible on a standard controller). The additional buttons are sent
 in the corresponding (SEL = LOW) scan in place of the original RUN/SELECT/II/I buttons.
 
+Any game checking for the existence of a 6-button pad should scan twice, and not make any assumptions about
+which scan number would yield the '0000' number.
+
 | Scan number | SEL value | Bit Number | Key |
 |:-----------:|:------:|:--------------:|:--------:|
 | 1 | HIGH | bit 3 (ie $8) | LEFT |
@@ -180,6 +183,11 @@ In-between scans, any X/Y movement is accumulated and presented as a monotonic '
 There does not seem to be any specific requirements for scanning frequencies, other than the fact that a
 subsequent scan should not appear within the timeout period for a preceding scan.
 
+In order to detect a mouse, a game will generally scan a number of times, and verify that a '0000' value returns
+in place of the UP/DOWN/LEFT/RIGHT keys; however, this has a danger of identifying a 6-button pad as a mouse.
+However, within a large number of scans in a single frame, two sequential '0000' values sould be able to identify
+a mouse.
+
 | Scan number | SEL value | Data Returned |
 |:-----------:|:------:|:--------:|
 | 1 | HIGH | bits 7-4 of 'Delta X' |
@@ -194,6 +202,21 @@ subsequent scan should not appear within the timeout period for a preceding scan
 
 ### Pachinko Controller Protocol
 
+The pachinko controller has two sections to it - all the standard buttons of a 2-button controller, plus a
+spring-loaded dial control which acts like a paddle with approximately 90 degreess of rotational travel.  The
+spring returns it to its counterclockwise limit, and the player is intended to rotate it clockwise to the
+appropriate amount.
+
+To the console, the pachinko controller appears like a multitap with a regular 2-button pad in port 1 (echoed
+on ports 3 and 5); in port 2 (and echoed on port 4), the data should be interpreted in the following manner:
+- Scan 'A' of the pad with SEL=HIGH will show with bits 3 and 1 as LOW (i.e. either $5, or $0 - but possibly $1 or $4).
+- The rest of the data on scan 'A' is not meaningful; it may show as zeroes, or it may have the same values as scan 'B'
+(except for those two bits).
+- Scan 'B' of the pad with SEL=HIGH will definitely return bit 3 as HIGH (i.e. $80 to $FF).
+- When taken as a whole, scan 'B' will show a digital value of the analog pachinko dial as follows:
+  - SEL = HIGH retrieves the most-significant 4 bits, and SEL = LOW retrieves the least signifiacnt 4 bits
+  - When taken as a byte, the value ranges between $FC (spring-returned counterclockwise limit) to $83 (at
+full-range of clockwise motion).
 
 ### Memory Base 128 Protocol
 
