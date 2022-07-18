@@ -218,7 +218,45 @@ on ports 3 and 5); in port 2 (and echoed on port 4), the data should be interpre
   - When taken as a byte, the value ranges between $FC (spring-returned counterclockwise limit) to $83 (at
 full-range of clockwise motion).
 
+
 ### Memory Base 128 Protocol
 
+Memory Base 128 is a console (host)-driven protocol which resenbles SPI to a certain degree.
+
+For Memory Base 128 protocol, the 'CLR' line is similar to the 'CLK' line of SPI, and when CLR transitions
+from LOW to HIGH, the value of SEL is taken as a single bit of data. Under normal conditions, the joypad read
+routines always set SEL to HIGH when CLR is set HIGH, so the data stream would normally be a series of '1' bits.
+
+In order to transition from 'joypad' mode to 'MB128' mode, the Memory Base device monitors the joypad scanning bitstream
+for a particular sequence of bits, and transitions to MB128 mode when it sees them.
+
+Memory Base 128 Mode is initiated when it sees the sequence '00010101' arrive.  This corresponds to a value of $A8,
+since the bitstream is least-significant-bit first (unlike SPI implementations elsewhere).
+
+After the $A8 value is triggered, the Memory Base 128 will ignore the inputs of the daisy-chained device, and instead
+communicate back to the console with:
+- Bit 3 = No meaning. Zero on Save-Kun units.
+- Bit 2 = Identification.  Transfers data back to the console only at predefined moments in the protocol; otherwise 0.
+- Bit 1 = No meaning. Zero on Save-Kun units.
+- Bit 0 = Data to be returned to the console
+
+Note that all data is sent least-significant bit first (in both directions):
+
+| Sequence | Number of Bits | Meaning |
+|----------|----------------|---------|
+| 1 | 2 | Send identification bit - echo the incoming bit back on bit 2 |
+| 2 | 1 | Request type (0 = Write; 1 = Read) |
+| 3 | 10 | Address (minimum granularity 128-byte offset within memory) |
+| 4 | 20 | Transfer length in bits (can address 128KB of memory down to the exact number of bits) |
+| 5 | (xfer len) | Data (to or from the console) |
+| 6 | 0 or 2 | Trailing empty bits (**Only if a write command**). Data out is set to zero after the first bit is recieved  |
+| 7 | 3 | Trailing empty bits. Data out is set to zero after the first bit is recieved  |
+
+
 ### Develo Box Protocol
+
+The Develo Box is intended to interface with a PC, so there is communications software running on the PC side
+to handle the more complicated communications this involves.
+
+This deserves its own file, which will follow in the near future.
 
