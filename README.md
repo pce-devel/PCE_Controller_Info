@@ -136,7 +136,7 @@ joypad scan, the multitap presents it as a sustained high signal across all inpu
 | L | H | 5 | H | H | H | H | H | H | H | H | L | H |
 | L | L | 5 | H | H | H | H | H | H | H | H | L | L |
 
-Note that all games are expected to be compatible with the Multitap.<br>
+**Compatibilty:** All games are expected to be compatible with the Multitap.<br>
 However, one game - Youkai Douchuuki - is known to be incompatible (it shows a black screen with no movement when multitap
 is plugged in). There may be a 'fix' version of this HuCard available, as there is a version of the ROM which functions properly.
 
@@ -171,7 +171,7 @@ which scan number would yield the '0000' number.
 | 2 | LOW | bit 1 (ie $2) | IV |
 | 2 | LOW | bit 0 (ie $1) | III |
 
-Games which are not specifically written to support 6-button controllers will not work properly.<br>
+**Compatibility:** Games which are not specifically written to support 6-button controllers will not work properly.<br>
 Compatible games include:
  - HuCard
    - Street Fighter II
@@ -234,7 +234,7 @@ a mouse.
 | 4 | HIGH | bits 3-0 of 'Delta Y' |
 | 4 | LOW  | buttons (RUN,SELECT,II,I) |
 
-Games which are not specifically written to support the PC Engine Mouse will not work properly.<br>
+**Compatibility:** Games which are not specifically written to support the PC Engine Mouse will not work properly.<br>
 Compatible games include:
  - HuCard : none
  - CDROM
@@ -274,7 +274,7 @@ on ports 3 and 5); in port 2 (and echoed on port 4), the data should be interpre
   - When taken as a byte, the value ranges between $FC (spring-returned counterclockwise limit) to $83 (at
 full-range of clockwise motion).
 
-Games which are not specifically written to support pachinko controllers may or may not work properly.<br>
+**Compatibility:** Games which are not specifically written to support pachinko controllers may or may not work properly.<br>
 Compatible games include:
  - HuCard
    - Pachiokun Juuban Shoubu
@@ -321,7 +321,7 @@ Note that all data is sent least-significant bit first (in both directions):
 At the conclusion of a transfer, the Memory base 128 disengages and allows the daisy-chained controller outputs
 to be returned to the console until the next $A8 sequence is received from the console.
 
-Games which are not specifically written to support the Memory Base 128 should work properly.<br>
+**Compatibility:** Games which are not specifically written to support the Memory Base 128 should work properly.<br>
 Compatible games include:
  - HuCard : None
  - CDROM
@@ -366,7 +366,7 @@ The X-HE3 converter connects a XE-1AP controller (originally made for MSX and X6
 in both digital and analog formats. In digital format, the controller acts like a regular 2-button joypad.
 In analog form, the controller has additional inputs for games which specifically support the analog pad.
 
-Games which are not specifically written to support the X-HE3/XE-1AP in analog format will not work properly,
+**Compatibility:** Games which are not specifically written to support the X-HE3/XE-1AP in analog format will not work properly,
 and should be used in digital format instead.<br>
 Compatible games include:
  - AfterBurner II
