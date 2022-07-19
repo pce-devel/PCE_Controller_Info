@@ -2,7 +2,7 @@
 
 Information about controller signalling on the PC Engine
 
-## Electrical
+## Electrical Characteristics
 
 The PC Engine is based on CMOS 5V logic, so the voltage supply is 5V and the logic levels are set as such.
 
@@ -38,12 +38,17 @@ As can be seen in the schematic:
 ![https://console5.com/wiki/File:PC-Engine---TG16-Controller-Schematic.png](https://console5.com/techwiki/images/9/9f/PC-Engine---TG16-Controller-Schematic.png)
 
 
+### Power Consumption of Joypad Peripherals
+
+Power consumption numbers are currently being confirmed, but are almost certainly lower than one might expect.
+
+
 ## Signalling Protocols - Overview
 
 The program will scan the joypad controls with code similar to the below.
 
 Notice that normally:
-1) The CRL bit is set only briefly, once per scan across all joypads
+1) The CLR bit is set only briefly, once per scan across all joypads
 2) SEL is kept HIGH for the initial read of joypad values, and toggled LOW to read the second group
 3) There is normally a brief delay - although the size of this can vary - between changing the value
 of the SEL line, and reading back return values from the joypad. This is above and beyond the ~680ns
@@ -131,6 +136,10 @@ joypad scan, the multitap presents it as a sustained high signal across all inpu
 | L | H | 5 | H | H | H | H | H | H | H | H | L | H |
 | L | L | 5 | H | H | H | H | H | H | H | H | L | L |
 
+Note that all games are expected to be compatible with the Multitap.<br>
+However, one game - Youkai Douchuuki - is known to be incompatible (it shows a black screen with no movement when multitap
+is plugged in). There may be a 'fix' version of this HuCard available, as there is a version of the ROM which functions properly.
+
 
 ### 6-button Controller Protocol
 
@@ -161,6 +170,31 @@ which scan number would yield the '0000' number.
 | 2 | LOW | bit 2 (ie $4) | V |
 | 2 | LOW | bit 1 (ie $2) | IV |
 | 2 | LOW | bit 0 (ie $1) | III |
+
+Games which are not specifically written to support 6-button controllers will not work properly.<br>
+Compatible games include:
+ - HuCard
+   - Street Fighter II
+ - CDROM
+   - Advanced Variable Geo
+   - Battlefield '94 in Tokyo Dome
+   - Emerald Dragon
+   - Fire Pro Jyoshi - Dome Choujyo Taisen
+   - Flash Hiders
+   - Garou Densetsu II - Aratanaru Tatakai
+   - Garou Densetsu Special
+   - Kakutou Haou Densetsu Algunos
+   - Linda Cube
+   - Mahjong Sword Princess Quest Gaiden
+   - Martial Champions
+   - Princess Maker 2
+   - Ryuuko no Ken
+   - Sotsugyou II - Neo Generation
+   - Super Real Mahjong P II - P III Custom
+   - Super Real Mahjong P V Custom
+   - Tengai Makyo - Kabuki Itouryodan
+   - World Heroes 2
+   - Ys IV
 
 
 ## Special Controller Peripherals
@@ -200,6 +234,27 @@ a mouse.
 | 4 | HIGH | bits 3-0 of 'Delta Y' |
 | 4 | LOW  | buttons (RUN,SELECT,II,I) |
 
+Games which are not specifically written to support the PC Engine Mouse will not work properly.<br>
+Compatible games include:
+ - HuCard : none
+ - CDROM
+   - 1552 Tenka Tairan
+   - A. III - Takin' the A Train
+   - Atlas Renaissance Voyage
+   - Brandish
+   - Dennou Tenshi Digital Angel
+   - Doukyuusei
+   - Eikan ha Kimini - Koukou Yakyuu Zenkoku Taikai
+   - Hatsukoi Monogatari
+   - Jantei Monogatari III - Saver Angels
+   - Lemmings
+   - Metal Angel
+   - Nemurenumori no Chiisana Ohanashi
+   - Power Golf 2 Golfer
+   - Princess Maker 2
+   - Tokimeki Memorial
+   - Vasteel 2
+
 
 ### Pachinko Controller Protocol
 
@@ -218,6 +273,15 @@ on ports 3 and 5); in port 2 (and echoed on port 4), the data should be interpre
   - SEL = HIGH retrieves the most-significant 4 bits, and SEL = LOW retrieves the least signifiacnt 4 bits
   - When taken as a byte, the value ranges between $FC (spring-returned counterclockwise limit) to $83 (at
 full-range of clockwise motion).
+
+Games which are not specifically written to support pachinko controllers may or may not work properly.<br>
+Compatible games include:
+ - HuCard
+   - Pachiokun Juuban Shoubu
+ - CDROM
+   - Pachiokun Maboroshi no Densetsu
+   - Pachiokun Warau Uchuu
+   - Pachiokun III - Pachisuro & Pachinko
 
 
 ### Memory Base 128 Protocol
@@ -257,6 +321,34 @@ Note that all data is sent least-significant bit first (in both directions):
 At the conclusion of a transfer, the Memory base 128 disengages and allows the daisy-chained controller outputs
 to be returned to the console until the next $A8 sequence is received from the console.
 
+Games which are not specifically written to support the Memory Base 128 should work properly.<br>
+Compatible games include:
+ - HuCard : None
+ - CDROM
+   - A. III - Takin' the A Train
+   - Atlas Renaissance Voyage
+   - Bishoujo Senshi Sailor Moon Collection
+   - Brandish
+   - Eikan ha Kimini - Koukou Yakyuu Zenkoku Taikai
+   - Emerald Dragon
+   - Fire Pro Jyoshi - Dome Choujyo Taisen
+   - Ganchouhishi - Aoki Ookami to Shiroki Mejika
+   - Linda Cube
+   - Magicoal
+   - Mahojng Sword Princess Quest Gaiden
+   - Nobunaga no Yabou - Bushou Fuuunroku
+   - Nobunaga no Yabou Zenkokuban
+   - Popful Mail
+   - Princess Maker 2
+   - Private Eye Dol
+   - Sankokushi III
+   - Shin Megami Tensei
+   - Super Mahjong Taikai
+   - Super Real Mahjong P II - P III Custom
+   - Super Real Mahjong P V Custom
+   - Tadaima Yuusha Boshuuchuu
+   - Vasteel 2
+
 
 ### Develo Box Protocol
 
@@ -269,3 +361,16 @@ This deserves its own file, which will follow in the near future.
 ## To Be Added:
 
 ### X-HE3 Converter for XE-1AP Analog Controller
+
+The X-HE3 converter connects a XE-1AP controller (originally made for MSX and X68000 computers) to the PC Engine,
+in both digital and analog formats. In digital format, the controller acts like a regular 2-button joypad.
+In analog form, the controller has additional inputs for games which specifically support the analog pad.
+
+Games which are not specifically written to support the X-HE3/XE-1AP in analog format will not work properly,
+and should be used in digital format instead.<br>
+Compatible games include:
+ - AfterBurner II
+ - Forgotten Worlds
+ - Operation Wolf
+ - Outrun
+
