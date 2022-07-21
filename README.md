@@ -9,6 +9,11 @@ The PC Engine is based on CMOS 5V logic, so the voltage supply is 5V and the log
 There are 6 active lines (besides power and ground) on the connector, with two being driven by
 the console (SEL and CLR), and 4 being return signals from the joypad/peripheral.
 
+The original purpose of SEL was to as a multiplex selector for joypad inputs (which 4 inputs out of 8 to
+read), and the purpose of CLR was to reset a port counter for the multitap... but over time, these
+signal have been used for more complicated purposes on sophisticated peripherals (more on this in the
+"Signalling Protocols" section below).
+
 Electrically, the signals of SEL and CLR are generally pulled up by a 47K resistor on the peripheral
 to prevent issues on the internals of the peripherals if power is supplied but CLR/SEL are floating;
 this is not a likely case, but this is a protective measure.
