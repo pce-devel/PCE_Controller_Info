@@ -378,4 +378,5 @@ Compatible games include:
  - Forgotten Worlds
  - Operation Wolf
  - Outrun
+ - Thunder Blade (possibly)
 
