@@ -47,7 +47,7 @@ As can be seen in the schematic:
 
 Power consumption numbers are currently being confirmed, but are almost certainly lower than one might expect.
 
-"Simple" power consumption:
+#### "Simple" power consumption:
 
 This test was conducted by connecting a current-limiting test power supply to the devices, with the CLR and SEL
 lines tied to ground (to prevent rapid state changes), and observing the digital readout on the power supply.
@@ -60,7 +60,7 @@ This is not a comprehensive test - rather, it represents the lower limit of curr
 | 5-port Multitap (NEC) | < 1 mA |
 | 5-port Multitap (NEC) | < 1 mA |
 | PC Engine Mouse | 6 mA |
-| XHE-3/XE-1AP | ~33 mA |
+| XHE-3/XE-1AP | 33 mA |
 | Memory Base 128 (NEC), fresh batteries | 0 mA |
 | Memory Base 128 (NEC), no batteries | 30 mA |
 | Save-kun (Koei), fresh batteries | 0 mA |
