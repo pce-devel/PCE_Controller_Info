@@ -377,21 +377,48 @@ Compatible games include:
    - Vasteel 2
 
 
-### Develo Box Protocol
-
-The Develo Box is intended to interface with a PC, so there is communications software running on the PC side
-to handle the more complicated communications this involves.
-
-This deserves its own file, which will follow in the near future.
-
-
-## To Be Added:
-
 ### X-HE3 Converter for XE-1AP Analog Controller
 
 The X-HE3 converter connects a XE-1AP controller (originally made for MSX and X68000 computers) to the PC Engine,
 in both digital and analog formats. In digital format, the controller acts like a regular 2-button joypad.
 In analog form, the controller has additional inputs for games which specifically support the analog pad.
+
+For other joypad peripherals, the CLR line ls LOW under normal circumstances, and a pulse HIGH indicates either:
+ a) A reset of the sequence, followed immediately by a low signal again, or
+ b) Other data to be transmitted on the SEL line at the time of transition, like SPI protocol (MB128)
+
+Normally, when CLR is HIGH, the return data is not expected to be valid; in most cases, CLR is tied to a 74HC157
+on the /OE line, which will send all '0000' data back until CLR transitions low again; this is not the case for the
+X-HE3/XE-1AP combination (in analog mode).
+
+In this XE-1AP's analog case, the CLR signal is held high except for a brief pulse low, which signals the joystick
+to gneerate a pulse train back to the PC Engine, which must be monitored closely for transitions (which are driven
+by an internal state machine on the joypad, not the PC Engine).
+
+During this time, SEL is held LOW as the PC Engine is expected to watch for state transitions on the buttons 'I' and 'II',
+which are on D0 and D1 respectively.  D0 is LOW and D1 is HIGH during the waiting period.  After roughly 68.4 microseconds,
+data is ready, which is signalled by D1 (button 'II') transitioning low.
+
+When the console sees this, its duty is to transition SEL to HIGH, in order to read the four data bits on D0-D3
+(which normally correspond to UP/DOWN/LEFT/RIGHT), which in this situation correspond to the first nybble of data
+from the joystick.  Then, SEL needs to transition back to LOW in order to monitor D0 and D1 again.  The window of data
+availability (when button 'II' stays LOW) is fairly short, roughly 12.1 microseconds, requiring a tight loop on the
+host console.
+
+Before the next nybble is made available, button 'II' transitions HIGH for roughly 3.8 microseconds while data lines
+transition.  Button 'I' transitions HIGH, representing the second nybble - and button 'II' transitions LOW again (for
+12.1 microseconds again), signalling data ready, and the console needs to fetch the nybble by toggling SEL and reading
+the lines during the availability window.
+
+When button 'II' toggles high again, this time it stays high for longer (to prepare for the next 2 nybbles), at
+21.8 microseconds.  The pattern repeats, with 6 bytes (12 nybbles) in all being transferred; the entire time from the
+initial pulse to the end of the data transfer is roughly 350 microseconds.
+
+Logic state diagram:
+
+![/assets/images/XHE-3_protocol.png](/assets/images/XHE-3_protocol.png)
+
+
 
 **Compatibility:** Games which are not specifically written to support the X-HE3/XE-1AP in analog format will not work properly,
 and should be used in digital format instead.<br>
@@ -401,4 +428,14 @@ Compatible games include:
  - Operation Wolf
  - Outrun
  - Thunder Blade (possibly)
+
+
+## To Be Added:
+
+### Develo Box Protocol
+
+The Develo Box is intended to interface with a PC, so there is communications software running on the PC side
+to handle the more complicated communications this involves.
+
+This deserves its own file, which will follow in the near future.
 
