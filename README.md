@@ -416,7 +416,7 @@ initial pulse to the end of the data transfer is roughly 350 microseconds.
 
 Logic state diagram:
 
-![/assets/images/XHE-3_protocol.png](/assets/images/XHE-3_protocol.png)
+![/images/XHE-3_protocol.png](/images/XHE-3_protocol.png)
 
 
 
