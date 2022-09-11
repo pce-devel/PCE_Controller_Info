@@ -414,7 +414,27 @@ When button 'II' toggles high again, this time it stays high for longer (to prep
 21.8 microseconds.  The pattern repeats, with 6 bytes (12 nybbles) in all being transferred; the entire time from the
 initial pulse to the end of the data transfer is roughly 350 microseconds.
 
-Logic state diagram:
+#### Data sequence output:
+
+The sequence of data (and bit-order) is as follows (from original joystick):
+
+All values are low when pressed, high when not pressed
+
+ 1. Buttons A, B, C, D - (Note: A is pressed if either A or A' is pressed; same with B or B')
+ 2. Buttons E1, E2, Start(F), Select (G)
+ 3. Top 4 bits of 'channel 0' (Y-axis;   limit up   = 0x00, limit down  = 0xFF)
+ 4. Top 4 bits of 'channel 1' (X-axis;   limit left = 0x00, limit right = 0xFF)
+ 5. Top 4 bits of 'channel 2' (Throttle; limit up   = 0xFF, limit down  = 0x00)
+ 6. 0000 (unused)
+ 7. Bottom 4 bits of 'channel 0' (Y-axis)
+ 8. Bottom 4 bits of 'channel 1' (X-axis)
+ 9. Bottom 4 bits of 'channel 2' (Throttle)
+10. 0000 (unused)
+11. Buttons A, B, A', B' (This can differentiate between the buttons, whereas scan #1 merges them)
+12. 1111 (all high)
+
+
+#### Logic state diagram:
 
 ![/images/XHE-3_protocol.png](/images/XHE-3_protocol.png)
 
